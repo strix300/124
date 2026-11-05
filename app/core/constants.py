@@ -1,0 +1,21 @@
+"""Неизменяемые соглашения о данных и идентификаторах."""
+
+from uuid import UUID
+
+DENSE_VECTOR = "dense"
+SPARSE_VECTOR = "bm25"
+POINT_NAMESPACE = UUID("db891af8-f1b2-4ba5-8d38-d60fca98bd12")
+PAGE_SEPARATOR = "\f"
+MAX_DOCUMENT_PAGES = 100
+MAX_QUOTE_CHARS = 4000
+MAX_CLAIM_CHARS = 1500
+MAX_ANSWER_CLAIMS = 8
+MAX_CLAIM_EVIDENCE = 8
+MAX_DOCUMENT_TITLE_CHARS = 500
+MAX_QUESTION_CHARS = 20000
+LLM_TEMPLATE_TOKEN_RESERVE = 512
+LLM_PROMPT_TOKEN_RESERVE = 5000
+TRANSIENT_HTTP_STATUSES = frozenset({408, 429, 500, 502, 503, 504})
+PIPELINE_VERSION = "1"
+NOT_FOUND_ANSWER = "В документе не найдено сведений, достаточных для ответа на вопрос."
+TERMINAL_STATUSES = frozenset({"succeeded", "failed"})
