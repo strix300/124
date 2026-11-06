@@ -12,7 +12,7 @@ from app.models import Candidate, Chunk
 @pytest.fixture(scope="session")
 def handbook_pdf() -> Path:
     """Использует предоставленный PDF без создания копии тестового документа."""
-    path = Path(__file__).resolve().parents[1] / "severny_kontur_operational_handbook.pdf"
+    path = Path(__file__).resolve().parent / "testdata/severny_kontur_operational_handbook.pdf"
     if not path.is_file():
         pytest.fail(f"Отсутствует исходный PDF: {path}")
     return path
@@ -20,35 +20,23 @@ def handbook_pdf() -> Path:
 
 @pytest.fixture(scope="session")
 def handbook_cases(handbook_pdf: Path) -> list[tuple[int, str, str, int | None]]:
-    """Читает вопросы и эталон из файлов; при отсутствии списка использует вопросы ключа."""
+    """Читает вопросы и эталон из поставляемого вместе с PDF ключа."""
     root = handbook_pdf.parent
-    key = (root / "rag_test_answer_key.txt").read_text(encoding="utf-8-sig")
+    key = (root / "severny_kontur_qa.txt").read_text(encoding="utf-8-sig")
     entries = re.findall(
         r"^Q(\d+)\. (.+)\nОжидаемый ответ: (.+)\nОриентир: (.+)",
         key,
         re.MULTILINE,
     )
     assert entries, "Не удалось прочитать эталонные ответы."
-    questions_path = root / "rag_test_questions.txt"
-    questions = (
-        dict(
-            re.findall(
-                r"^(?:Q)?(\d+)[.)]\s+(.+)",
-                questions_path.read_text(encoding="utf-8-sig"),
-                re.MULTILINE,
-            )
-        )
-        if questions_path.is_file()
-        else {number: question for number, question, _, _ in entries}
-    )
     return [
         (
             int(number),
-            questions[number],
+            question,
             expected,
             int(page.removeprefix("стр. ")) if page.startswith("стр. ") else None,
         )
-        for number, _, expected, page in entries
+        for number, question, expected, page in entries
     ]
 
 
